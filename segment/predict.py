@@ -36,6 +36,8 @@ from pathlib import Path
 
 import torch
 
+from memory_profiler import profile
+
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -53,6 +55,7 @@ from utils.torch_utils import select_device, smart_inference_mode
 
 
 @smart_inference_mode()
+@profile
 def run(
     weights=ROOT / 'yolov5s-seg.pt',  # model.pt path(s)
     source=ROOT / 'data/images',  # file/dir/URL/glob/screen/0(webcam)
@@ -237,7 +240,7 @@ def run(
     if update:
         strip_optimizer(weights[0])  # update model (to fix SourceChangeWarning)
 
-
+@profile
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'yolov5s-seg.pt', help='model path(s)')
@@ -273,7 +276,7 @@ def parse_opt():
     print_args(vars(opt))
     return opt
 
-
+@profile
 def main(opt):
     check_requirements(exclude=('tensorboard', 'thop'))
     run(**vars(opt))
